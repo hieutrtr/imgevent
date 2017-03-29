@@ -4,9 +4,8 @@ import "testing"
 
 func TestBuildUploadEvent(t *testing.T) {
 	e := &UploadEvent{
-		Topic:     "test-imgevent",
-		ImgID:     "test-id",
-		Timestamp: "1490762174",
+		Topic: "test-imgevent",
+		ImgID: "test-id",
 	}
 	_, err := e.buildEvent()
 	if err != nil {
@@ -24,9 +23,8 @@ func TestCreateProducer(t *testing.T) {
 func TestProduceUploadEvent(t *testing.T) {
 	p, _ := NewProducer()
 	e := &UploadEvent{
-		Topic:     "test-imgevent",
-		ImgID:     "test-id",
-		Timestamp: "1490762174",
+		Topic: "test-imgevent",
+		ImgID: "test-id",
 	}
 	err := p.Produce(e)
 	if err != nil {

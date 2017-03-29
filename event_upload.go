@@ -26,11 +26,7 @@ func (e *UploadEvent) buildEvent() (*sarama.ProducerMessage, error) {
 	if e.ImgID == "" {
 		return nil, errors.New("Missing ImgID")
 	}
-	if e.Timestamp == "" {
-		return nil, errors.New("Missing Timestamp")
-	}
-	val := fmt.Sprintf("{\"ImgID\":%s,\"Timestamp\":%s}", e.ImgID, e.Timestamp)
-	msg := &sarama.ProducerMessage{Topic: e.Topic, Key: sarama.StringEncoder(e.ImgID), Value: sarama.StringEncoder(val)}
+	msg := &sarama.ProducerMessage{Topic: e.Topic, Key: sarama.StringEncoder(e.ImgID), Value: sarama.StringEncoder(e.ImgID)}
 	return msg, nil
 }
 
