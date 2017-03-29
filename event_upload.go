@@ -22,6 +22,18 @@ type Producer struct {
 	sarama.SyncProducer
 }
 
+func (e *UploadEvent) buildEvent() (*sarama.ProducerMessage, error) {
+	if e.ImgID == "" {
+		return nil, errors.New("Missing ImgID")
+	}
+	if e.Timestamp == "" {
+		return nil, errors.New("Missing Timestamp")
+	}
+	val := fmt.Sprintf("{\"ImgID\":%s,\"Timestamp\":%s}", e.ImgID, e.Timestamp)
+	msg := &sarama.ProducerMessage{Topic: e.Topic, Key: sarama.StringEncoder(e.ImgID), Value: sarama.StringEncoder(val)}
+	return msg, nil
+}
+
 // NewProducer create kafka producer
 func NewProducer() (*Producer, error) {
 	kafkaBrokers := os.Getenv("KAFKA_BROKERS")
@@ -37,9 +49,13 @@ func NewProducer() (*Producer, error) {
 
 // Produce kafka event
 func (p *Producer) Produce(e *UploadEvent) error {
-	val := fmt.Sprintf("{\"ImgID\":%s,\"Timestamp\":%s}", e.ImgID, e.Timestamp)
-	msg := &sarama.ProducerMessage{Topic: e.Topic, Key: sarama.StringEncoder(e.ImgID), Value: sarama.StringEncoder(val)}
-	partition, offset, err := p.SyncProducer.SendMessage(msg)
+	var partition int32
+	var offset int64
+	msg, err := e.buildEvent()
+	if err != nil {
+		return err
+	}
+	partition, offset, err = p.SyncProducer.SendMessage(msg)
 	if err == nil {
 		log.Printf("Produced: %s metadata: {partition:%d, offset:%d}\n", fmt.Sprint(e), partition, offset)
 	}

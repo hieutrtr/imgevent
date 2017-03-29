@@ -2,6 +2,18 @@ package imgevent
 
 import "testing"
 
+func TestBuildUploadEvent(t *testing.T) {
+	e := &UploadEvent{
+		Topic:     "test-imgevent",
+		ImgID:     "test-id",
+		Timestamp: "1490762174",
+	}
+	_, err := e.buildEvent()
+	if err != nil {
+		t.Fatal("Building upload event was fail on error", err.Error())
+	}
+}
+
 func TestCreateProducer(t *testing.T) {
 	_, err := NewProducer()
 	if err != nil {
