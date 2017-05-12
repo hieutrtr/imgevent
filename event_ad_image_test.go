@@ -1,6 +1,11 @@
 package imgevent
 
-import "testing"
+import (
+	"fmt"
+	"testing"
+
+	"github.com/Shopify/sarama"
+)
 
 func TestBuildAdImageEvent(t *testing.T) {
 	e := &AdImageEvent{
@@ -25,4 +30,13 @@ func TestProduceAdImageEvent(t *testing.T) {
 	if err != nil {
 		t.Fatal("Producing event to kafka was fail on error", err.Error())
 	}
+}
+
+func TestConsumeAdImageEvent(t *testing.T) {
+	c := NewConsumer(-2, func(msg *sarama.ConsumerMessage) error {
+		fmt.Println(string(msg.Value))
+		return nil
+	})
+
+	c.Consume()
 }

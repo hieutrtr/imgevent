@@ -89,7 +89,7 @@ func (p *Producer) Produce(e Event) error {
 }
 
 // Consume upload events
-func (c *Consumer) Consume(e Event) {
+func (c *Consumer) Consume() {
 	for {
 		select {
 		case msg := <-c.consumer.Messages():
