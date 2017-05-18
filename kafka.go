@@ -9,6 +9,12 @@ import (
 
 	"github.com/Shopify/sarama"
 	cluster "github.com/bsm/sarama-cluster"
+	avro "github.com/elodina/go-avro"
+	gavro "github.com/elodina/go-kafka-avro"
+)
+
+var (
+	schemaRegistry = os.Getenv("KAFKA_SCHEMA_REGISTRY")
 )
 
 // FnProcess function to process consumer's events
@@ -86,6 +92,22 @@ func (p *Producer) Produce(e Event) error {
 		log.Printf("Produced: %s metadata: {partition:%d, offset:%d}\n", fmt.Sprint(e), partition, offset)
 	}
 	return err
+}
+
+func AvroDecode(obj []byte, key string) (interface{}, error) {
+	if schemaRegistry == "" {
+		return nil, errors.New("Schema Registry was not configed")
+	}
+	decoder := gavro.NewKafkaAvroDecoder(schemaRegistry)
+	decoded, err := decoder.Decode(obj)
+	if err != nil {
+		return nil, err
+	}
+	decodedRecord, ok := decoded.(*avro.GenericRecord)
+	if ok == false {
+		return nil, errors.New("Cannot decode avro record")
+	}
+	return decodedRecord.Get(key), nil
 }
 
 // Consume upload events
