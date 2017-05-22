@@ -123,3 +123,10 @@ func (c *Consumer) Consume() {
 		}
 	}
 }
+
+// MarkProceed mark offset as proceed
+func (c *Consumer) MarkProceed() {
+	if c != nil {
+		c.consumer.MarkOffset(msg, "") // mark message as processed
+	}
+}
