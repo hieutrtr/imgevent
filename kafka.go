@@ -125,7 +125,7 @@ func (c *Consumer) Consume() {
 }
 
 // MarkProceed mark offset as proceed
-func (c *Consumer) MarkProceed() {
+func (c *Consumer) MarkProceed(msg *sarama.ConsumerMessage) {
 	if c != nil {
 		c.consumer.MarkOffset(msg, "") // mark message as processed
 	}
