@@ -119,6 +119,7 @@ func (c *Consumer) Consume() {
 			if err != nil {
 				fmt.Println(err)
 			}
+			c.consumer.MarkOffset(msg, "") // mark message as processed
 		}
 	}
 }
